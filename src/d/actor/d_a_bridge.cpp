@@ -5,7 +5,10 @@
 
 #include "d/actor/d_a_bridge.h"
 #include "d/d_bg_w.h"
+#include "d/d_com_inf_game.h"
+#include "d/d_path.h"
 #include "d/d_procname.h"
+#include "f_op/f_op_actor_mng.h"
 
 /* 00000078-00000504       .text ride_call_back__FP4dBgWP10fopAc_ac_cP10fopAc_ac_c */
 void ride_call_back(dBgW*, fopAc_ac_c*, fopAc_ac_c*) {
@@ -93,8 +96,78 @@ static BOOL CallbackCreateHeap(fopAc_ac_c*) {
 }
 
 /* 00004310-00004770       .text daBridge_Create__FP10fopAc_ac_c */
-static cPhs_State daBridge_Create(fopAc_ac_c*) {
-    /* Nonmatching */
+static cPhs_State daBridge_Create(fopAc_ac_c* a_this) {
+    bridge_class* i_this = static_cast<bridge_class*>(a_this);
+    fopAcM_SetupActor(i_this, bridge_class);
+
+    cPhs_State ret = dComIfG_resLoad(&i_this->mPhsBridge, "Bridge");
+    if(ret == cPhs_COMPLEATE_e){
+    
+        i_this->mTypeBits = fopAcM_GetParam(a_this);
+        if(i_this->mTypeBits == 0xff)
+            i_this->mTypeBits = 0;
+        i_this->mUnk_2 = fopAcM_GetParam(a_this) >> 8;
+        i_this->mPathId = fopAcM_GetParam(a_this) >> 16;
+        if(i_this->mPathId == 0xff)
+            return cPhs_ERROR_e;
+
+        dPath* path = dPath_GetRoomPath(i_this->mPathId, fopAcM_GetRoomNo(a_this));
+        if(path != NULL){
+            dPnt* pnt = path->m_points;
+            a_this->home.pos = pnt[0].m_position;
+            i_this->mEndPos = pnt[1].m_position;
+            cXyz delta = i_this->mEndPos - a_this->home.pos;
+
+            a_this->home.angle.y = cM_atan2s(delta.x, delta.z);
+            a_this->home.angle.x = -cM_atan2s(delta.y, std::sqrtf(delta.x * delta.x + delta.z * delta.z));
+            
+            float fVar1 = 0.0f;
+            if(delta.abs() > 1300.0f) fVar1 = 3.0f;
+            i_this->mBrCount = delta.abs() / ((fVar1 + 47.0f) * 1.5f);
+            i_this->mPathIdP = i_this->mPathId + 1;
+        }
+        else {
+            return cPhs_ERROR_e;
+        }
+        if(i_this->mBrCount >= 50)
+            return cPhs_ERROR_e;
+
+        if(fopAcM_entrySolidHeap(a_this, CallbackCreateHeap, 0x2fb60) == false)
+            return cPhs_ERROR_e;
+
+        CreateInit(a_this);
+        if(i_this->mpBgW != NULL && dComIfG_Bgsp()->Regist((cBgW*)i_this->mpBgW, i_this) != 0)
+            return cPhs_ERROR_e;
+
+        a_this->cullMtx = i_this->mBr[0].mpModel->getBaseTRMtx();
+        fopAcM_setCullSizeBox(a_this, -120.0f, -30.0f, -60.0f, 120.0f, 30.0f, 60.0f);
+        fopAcM_setCullSizeFar(a_this, 10.0f);
+        if((i_this->mTypeBits & 0b10) != 0){
+            // if(i_this->mBrCount < 16){
+            //     if(i_this->mBrCount < 12){
+            //         i_this->m02DD = 7;
+            //     }
+            //     else {
+            //         i_this->m02DD = 11;
+            //     }
+            // }
+            // else {
+            //     i_this->m02DD = 15;
+            // }
+            if(i_this->mBrCount >= 16)
+                i_this->m02DD = 15;
+            else if(i_this->mBrCount >= 12)
+                i_this->m02DD = 11;
+            else
+                i_this->m02DD = 7;
+        }
+        else{
+            i_this->m02DD = i_this->mBrCount;
+        }
+        
+    }
+
+    return ret;
 }
 
 static actor_method_class l_daBridge_Method = {
