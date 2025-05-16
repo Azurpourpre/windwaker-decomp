@@ -27,7 +27,7 @@ struct br_s {
     /* 0x3C2 */ s16 m3C2;
     /* 0x3C4 */ JPABaseEmitter* m3C4;
     /* 0x3C8 */ JPABaseEmitter* m3C8;
-    /* 0x3CC */ cXyz m3CC;
+    /* 0x3CC */ cXyz mAudioPos;
     /* 0x3D8 */ cXyz mPosition;
     /* 0x3E4 */ csXyz mRotation;
     /* 0x3EA */ s16 mRotationYExtra;

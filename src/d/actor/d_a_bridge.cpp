@@ -9,6 +9,7 @@
 #include "d/d_path.h"
 #include "d/d_procname.h"
 #include "f_op/f_op_actor_mng.h"
+#include "m_Do/m_Do_audio.h"
 
 /* 00000078-00000504       .text ride_call_back__FP4dBgWP10fopAc_ac_cP10fopAc_ac_c */
 void ride_call_back(dBgW*, fopAc_ac_c*, fopAc_ac_c*) {
@@ -76,13 +77,23 @@ static BOOL daBridge_Execute(bridge_class*) {
 }
 
 /* 00003C68-00003CD4       .text daBridge_IsDelete__FP12bridge_class */
-static BOOL daBridge_IsDelete(bridge_class*) {
-    /* Nonmatching */
+static BOOL daBridge_IsDelete(bridge_class* i_this) {
+    br_s* brArr = i_this->mBr;
+    for(int i = 0; i < i_this->mBrCount; i++, brArr++){
+        mDoAud_seDeleteObject(&brArr->mAudioPos);
+    }
+
+    return TRUE;
 }
 
 /* 00003CD4-00003D2C       .text daBridge_Delete__FP12bridge_class */
-static BOOL daBridge_Delete(bridge_class*) {
-    /* Nonmatching */
+static BOOL daBridge_Delete(bridge_class* i_this) {
+    dComIfG_resDelete(&i_this->mPhsBridge, "Bridge");
+    if(i_this->mpBgW != NULL){
+        dComIfG_Bgsp()->Release((cBgW*)i_this->mpBgW);
+    }
+
+    return TRUE;
 }
 
 /* 00003D2C-00003E00       .text CreateInit__FP10fopAc_ac_c */
