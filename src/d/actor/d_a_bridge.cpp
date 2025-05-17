@@ -4,7 +4,10 @@
 //
 
 #include "d/actor/d_a_bridge.h"
+#include "d/res/res_bridge.h"
+#include "d/res/res_always.h"
 #include "d/d_bg_w.h"
+#include "d/d_bg_w_sv.h"
 #include "d/d_com_inf_game.h"
 #include "d/d_path.h"
 #include "d/d_procname.h"
@@ -90,7 +93,7 @@ static BOOL daBridge_IsDelete(bridge_class* i_this) {
 static BOOL daBridge_Delete(bridge_class* i_this) {
     dComIfG_resDelete(&i_this->mPhsBridge, "Bridge");
     if(i_this->mpBgW != NULL){
-        dComIfG_Bgsp()->Release((cBgW*)i_this->mpBgW);
+        dComIfG_Bgsp()->Release(i_this->mpBgW);
     }
 
     return TRUE;
@@ -146,8 +149,118 @@ void CreateInit(fopAc_ac_c* a_this) {
 }
 
 /* 00003E00-00004310       .text CallbackCreateHeap__FP10fopAc_ac_c */
-static BOOL CallbackCreateHeap(fopAc_ac_c*) {
-    /* Nonmatching */
+static BOOL CallbackCreateHeap(fopAc_ac_c* a_this) {
+    static const int bridge_bmd[2] = {BRIDGE_BDL_OBM_BRIDGE, BRIDGE_BDL_OBM_BRIDGE2};
+
+    bridge_class* i_this = static_cast<bridge_class*>(a_this);
+    
+    uint modelNum = i_this->mTypeBits & 1;
+    if((i_this->mTypeBits & 4) != 0)
+        modelNum = 1;
+
+    J3DModelData* modelData, *modelData2;
+    modelData = static_cast<J3DModelData*>(dComIfG_getObjectRes("Bridge", bridge_bmd[modelNum]));
+    JUT_ASSERT(0x920, modelData != NULL);
+    
+    if(modelNum == 1){
+        modelData2 = static_cast<J3DModelData*>(dComIfG_getObjectRes("Bridge", BRIDGE_BDL_OBM_CHAIN1));
+        JUT_ASSERT(0x926, modelData2 != NULL);
+    }
+
+    br_s* pBr = i_this->mBr;
+    int iVar8 = 2;
+    if((i_this->mTypeBits & 1) != 0)
+        iVar8 = 0;
+
+    for(int i = 0; i < i_this->mBrCount ;i++, pBr++){
+        pBr->mpModel = mDoExt_J3DModel__create(modelData, 0x80000, 0x11020002);
+        if(pBr->mpModel == NULL)
+            return 0;
+
+        if((i_this->mTypeBits & 4) == 0){
+            if((i + iVar8 & 0b11) == 0){
+                pBr->m408 = 7;
+                if((i_this->mTypeBits & 1) == 1){
+                    pBr->m418 = 50;
+                    pBr->mpModelRope0 = mDoExt_J3DModel__create(modelData2, 0x80000, 0x11020002);
+                    pBr->mpModelRope1 = mDoExt_J3DModel__create(modelData2, 0x80000, 0x11020002);
+                    if(pBr->mpModelRope0 == NULL || pBr->mpModelRope1 == NULL)
+                        return FALSE;
+                }
+                else {
+                    pBr->m418 = -1;
+                    BOOL lineMatSucc;
+                    if((i_this->mTypeBits & 8) != 0){
+                        ResTIMG* lineMatData = static_cast<ResTIMG*>(dComIfG_getObjectRes("Always", ALWAYS_BTI_TXM_ROPE1));
+                        lineMatSucc = pBr->mLineMat1.init(4, 5, lineMatData, 1);
+                    }
+                    else {
+                        ResTIMG* lineMatData = static_cast<ResTIMG*>(dComIfG_getObjectRes("Always", ALWAYS_BTI_ROPE));
+                        lineMatSucc = pBr->mLineMat1.init(4, 5, lineMatData, 1);
+                    }
+                    if(lineMatSucc == FALSE)
+                        return FALSE;
+                }
+            }
+            if(i == 0){
+                BOOL lineMatSucc;
+                if((i_this->mTypeBits & 8) != 0){
+                    ResTIMG* lineMatData = static_cast<ResTIMG*>(dComIfG_getObjectRes("Always", ALWAYS_BTI_TXM_ROPE1));
+                    lineMatSucc = i_this->mLineMat.init(2, 14, lineMatData, 0);
+                }
+                else {
+                    ResTIMG* lineMatData = static_cast<ResTIMG*>(dComIfG_getObjectRes("Always", ALWAYS_BTI_ROPE));
+                    lineMatSucc = i_this->mLineMat.init(2, 14, lineMatData, 0);
+                }
+                
+                if(lineMatSucc == FALSE)
+                    return FALSE;
+            }
+        }
+
+        if((i_this->mTypeBits & 1) == 0){
+            pBr->mScale.y = cM_rndF(0.3f) + 1.0f;
+            if((i + iVar8 & 0b11) == 0){
+                pBr->mScale.x = 1.05f;
+            }
+            else{
+                pBr->mScale.x = cM_rndF(0.1f) + 1.0f;
+            }
+        }
+        else
+            pBr->mScale.x = pBr->mScale.x = 1.0f;
+
+        pBr->mScale.z = 1.5f;
+        pBr->mpModel->setBaseScale(pBr->mScale);
+        if(cM_rndF(1.0f) < 0.5f)
+            pBr->mRotationYExtra = -0x8000;
+    }
+
+    i_this->mpBgW = new dBgWSv();
+    if(i_this->mpBgW == NULL)
+        return FALSE;
+
+    if((i_this->mTypeBits & 1) == 1){
+        cBgD_t* bgwData = static_cast<cBgD_t*>(dComIfG_getObjectRes("Bridge", BRIDGE_DZB_MBRDG2));
+        if(i_this->mpBgW->Set(bgwData, 0) != FALSE)
+            return FALSE;
+    }
+    else {
+        cBgD_t* bgwData = static_cast<cBgD_t*>(dComIfG_getObjectRes("Bridge", BRIDGE_DZB_MBRDG));
+        if(i_this->mpBgW->Set(bgwData, 0) != FALSE)
+            return FALSE;
+    }
+    i_this->mpBgW->SetRideCallback(ride_call_back);
+    i_this->mpBgW->CopyBackVtx();
+    
+    cBgD_Vtx_t* pVtxTbl = i_this->mpBgW->GetVtxTbl();
+    for(int i = 0; i < i_this->mpBgW->GetVtxNum(); i++){
+        pVtxTbl[i].x = a_this->current.pos.x;
+        pVtxTbl[i].y = a_this->current.pos.y;
+        pVtxTbl[i].z = a_this->current.pos.z;
+    }
+    i_this->mpBgW->Move();
+    return TRUE;
 }
 
 /* 00004310-00004770       .text daBridge_Create__FP10fopAc_ac_c */
@@ -191,7 +304,7 @@ static cPhs_State daBridge_Create(fopAc_ac_c* a_this) {
             return cPhs_ERROR_e;
 
         CreateInit(a_this);
-        if(i_this->mpBgW != NULL && dComIfG_Bgsp()->Regist((cBgW*)i_this->mpBgW, i_this) != 0)
+        if(i_this->mpBgW != NULL && dComIfG_Bgsp()->Regist(i_this->mpBgW, i_this) != 0)
             return cPhs_ERROR_e;
 
         a_this->cullMtx = i_this->mBr[0].mpModel->getBaseTRMtx();
