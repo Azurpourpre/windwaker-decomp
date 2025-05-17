@@ -97,8 +97,52 @@ static BOOL daBridge_Delete(bridge_class* i_this) {
 }
 
 /* 00003D2C-00003E00       .text CreateInit__FP10fopAc_ac_c */
-void CreateInit(fopAc_ac_c*) {
-    /* Nonmatching */
+void CreateInit(fopAc_ac_c* a_this) {
+    static dCcD_SrcCyl himo_cyl_src = {
+    // dCcD_SrcGObjInf
+    {
+        /* Flags             */ 0,
+        /* SrcObjAt  Type    */ 0,
+        /* SrcObjAt  Atp     */ 0,
+        /* SrcObjAt  SPrm    */ 0,
+        /* SrcObjTg  Type    */ ~(AT_TYPE_BOOMERANG | AT_TYPE_WATER | AT_TYPE_UNK20000 | AT_TYPE_WIND | AT_TYPE_UNK400000 | AT_TYPE_LIGHT),
+        /* SrcObjTg  SPrm    */ cCcD_TgSPrm_Set_e | cCcD_TgSPrm_IsEnemy_e,
+        /* SrcObjCo  SPrm    */ cCcD_CoSPrm_Set_e | cCcD_CoSPrm_IsPlayer_e | cCcD_CoSPrm_VsGrpAll_e,
+        /* SrcGObjAt Se      */ 0,
+        /* SrcGObjAt HitMark */ 0,
+        /* SrcGObjAt Spl     */ 0,
+        /* SrcGObjAt Mtrl    */ 0,
+        /* SrcGObjAt SPrm    */ 0,
+        /* SrcGObjTg Se      */ 0,
+        /* SrcGObjTg HitMark */ ~0,
+        /* SrcGObjTg Spl     */ 0,
+        /* SrcGObjTg Mtrl    */ 0,
+        /* SrcGObjTg SPrm    */ dCcG_TgSPrm_Shield_e,
+        /* SrcGObjCo SPrm    */ 0,
+    },
+    // cM3dGCylS
+    {
+        /* Center */ 0.0f, 0.0f, 0.0f,
+        /* Radius */ 5.0f,
+        /* Height */ 1000.0f,
+    },
+};
+
+    bridge_class* i_this = static_cast<bridge_class*>(a_this);
+
+    i_this->mStts.Init(0xff, 0xff, a_this);
+
+    br_s* br_i = i_this->mBr;
+    for(int i = 0; i < i_this->mBrCount; i++, br_i++){
+        for(int j = 0; j < 2; j++){
+            br_i->mCyl[j].Set(himo_cyl_src);
+            br_i->mCyl[j].SetStts(&i_this->mStts);
+            if((i_this->mTypeBits & 1) == 0){
+                br_i->mCyl[j].SetH(200.0f);
+                br_i->mCyl[j].OffTgShield();
+            }
+        }
+    }
 }
 
 /* 00003E00-00004310       .text CallbackCreateHeap__FP10fopAc_ac_c */
