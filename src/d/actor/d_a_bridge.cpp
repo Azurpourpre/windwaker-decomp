@@ -4,6 +4,8 @@
 //
 
 #include "d/actor/d_a_bridge.h"
+#include "d/actor/d_a_bk.h"
+#include "d/actor/d_a_bomb.h"
 #include "d/res/res_bridge.h"
 #include "d/res/res_always.h"
 #include "d/d_bg_w.h"
@@ -15,8 +17,92 @@
 #include "m_Do/m_Do_audio.h"
 
 /* 00000078-00000504       .text ride_call_back__FP4dBgWP10fopAc_ac_cP10fopAc_ac_c */
-void ride_call_back(dBgW*, fopAc_ac_c*, fopAc_ac_c*) {
-    /* Nonmatching */
+void ride_call_back(dBgW* bgw, fopAc_ac_c* i_ac, fopAc_ac_c* i_pt) {
+    bridge_class* i_this = static_cast<bridge_class*>(i_ac);
+    
+    cXyz local_4c = i_this->mBr[0].mPosition - i_pt->current.pos;
+    int br_idx = (std::sqrtf(local_4c.x * local_4c.x + local_4c.z * local_4c.z) / 76.5f - (-0.5f));
+    int last_br_idx = i_this->mBrCount - 1; 
+    if(br_idx > last_br_idx)
+        br_idx = last_br_idx;
+    else if(br_idx < 0)
+            br_idx = 0;
+
+    br_s* br_i = &i_this->mBr[br_idx];
+    float fVar = ((i_this->mTypeBits & 0b101) != 0) ? 0.85f : 1.0f;
+
+    mDoMtx_YrotS(*calc_mtx, -br_i->mRotation.y);
+    cXyz delta_pos2 = i_pt->current.pos - br_i->mPosition;
+    cXyz local_64, cStack_70;
+    MtxPosition(&delta_pos2, &local_64);
+    delta_pos2 = i_pt->old.pos - br_i->mPosition;
+    MtxPosition(&delta_pos2, &cStack_70);
+    i_pt->speed.y = -5.0f;
+
+    float fVar6;
+    s16 pt_name = fopAcM_GetName(i_pt);
+    if(pt_name == PROC_PLAYER){
+        fVar6 = 100.0f;
+        br_i->m3F4 = -31.0f;
+        i_this->m033C = 5;
+    }
+    else if(pt_name == PROC_MO2){
+        fVar6 = 150.0f;
+        br_i->m3F4 = -40.0f;
+        i_pt->speed.y = -20.0f;
+    }
+    else if(pt_name == PROC_BK){
+        i_pt->speed.y = -20.0f;
+        fVar6 = 100.0f;
+        br_i->m3F4 = -25.0f;
+        bk_class* i_other = static_cast<bk_class*>(i_pt);
+        i_other->dr.m7B8 = fopAcM_GetID(i_ac);
+        i_other->dr.m7B2 = 8;
+        i_other->dr.m7AC = br_i->mRotation;
+        if(local_64.x > 0.0f){
+            i_other->dr.m79C = &br_i->m11C[1];
+            i_other->dr.m7AC.y += -0x4000;
+            i_other->dr.m7B4 = -0x2000;
+        }
+        else {
+            i_other->dr.m79C = &br_i->m0F8[1];
+            i_other->dr.m7AC.y += 0x4000;
+            i_other->dr.m7B4 = 0x2000;
+        }
+        i_other->m0B2C = br_i;
+    }
+    else {
+        fVar6 = 50.0f;
+        br_i->m3F4 = -10.0f;
+        if(fopAcM_GetName(i_pt) == PROC_BOMB && static_cast<daBomb_c*>(i_pt)->getBombRestTime() <= 1){
+            br_i->m3F4 = -300.0f;
+            i_this->m02E0 = 20.0f;
+            return;
+        }
+    }
+
+    fVar6 *= fVar;
+    br_i->m3F4 *= fVar;
+    br_i->m3F4 += i_this->m02FC * JMASSin(i_this->m0300) * 0.03f * fVar6;
+    br_i->m400 = -local_64.x * fVar6;
+    br_i->m406 = 2;
+    local_4c = local_64 - cStack_70;
+    fVar6 = 0.3f * local_4c.abs() * fVar;
+    if(fVar6 > 20.0f)
+        fVar6 = 20.0f;
+
+    if(i_this->m02E0 <= fVar6){
+        i_this->m02E0 = fVar6;
+    }
+
+    fVar6 = fVar * std::abs(local_4c.x);
+    if(fVar6 > 50.0f)
+        fVar6 = 50.0f;
+
+    if(i_this->m02E4 <= fVar6)
+        i_this->m02E4 += 0.5f;
+
+    return;
 }
 
 /* 00000540-00000614       .text kikuzu_set__FP12bridge_classP4cXyz */
