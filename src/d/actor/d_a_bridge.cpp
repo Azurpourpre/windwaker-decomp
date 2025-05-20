@@ -106,8 +106,20 @@ void ride_call_back(dBgW* bgw, fopAc_ac_c* i_ac, fopAc_ac_c* i_pt) {
 }
 
 /* 00000540-00000614       .text kikuzu_set__FP12bridge_classP4cXyz */
-void kikuzu_set(bridge_class*, cXyz*) {
+void kikuzu_set(bridge_class* i_this, cXyz* pos) {
     /* Nonmatching */
+    csXyz angle = dComIfGp_getPlayer(0)->shape_angle;
+    angle.y -= 0x8000;
+
+    JPABaseEmitter* particle_emitter = dComIfGp_particle_set(dPa_name::ID_COMMON_002B, pos, &angle, NULL, 0xff, NULL, -1, &i_this->tevStr.mColorK0, &i_this->tevStr.mColorK0, NULL);
+    if(particle_emitter != NULL){
+        particle_emitter->setRate(10.0f);
+        particle_emitter->setMaxFrame(1);
+        particle_emitter->setSpread(0.2f);
+        particle_emitter->setVolumeSweep(0.15f);
+        JGeometry::TVec3<float> scale(0.7f, 0.7f, 0.7f);
+        particle_emitter->setGlobalParticleScale(scale);
+    }
 }
 
 /* 00000614-000011EC       .text daBridge_Draw__FP12bridge_class */
