@@ -25,72 +25,98 @@ static const char* l_arcname_tbl[] = {
 };
 
 static sRotenAnmDat l_npc_anm_wait[] = {
-    0x00,
-    0x0E,
-    0xFF,
+    {
+        0x00,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_talk[] = {
-    0x01,
-    0x0E,
-    0xFF,
+    {
+        0x01,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_walk[] = {
-    0x02,
-    0x0E,
-    0xFF,
+    {
+        0x02,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_talk2[] = {
-    0x03,
-    0x0E,
-    0xFF,
+    {
+        0x03,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_talk3[] = {
-    0x04,
-    0x0E,
-    0xFF,
+    {
+        0x04,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_talk4[] = {
-    0x05,
-    0x06,
-    0xFF,
+    {
+        0x05,
+        0x06,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_talk5[] = {
-    0x06,
-    0x0A,
-    0xFF,
+    {
+        0x06,
+        0x0A,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_watasu[] = {
-    0x07,
-    0x0E,
-    0x01,
-    0x08,
-    0x0E,
-    0xFF,
+    {
+        0x07,
+        0x0E,
+        0x01,
+    },
+    {
+        0x08,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_itemwait[] = {
-    0x08,
-    0x0E,
-    0xFF,
+    {
+        0x08,
+        0x0E,
+        0xFF,
+    },
 };
 
 static sRotenAnmDat l_npc_anm_wind[] = {
-    0x09,
-    0x0E,
-    0x01,
-    0x00,
-    0x14,
-    0x01,
-    0x0FF,
-    0x08,
-    0x00,
+    {
+        0x09,
+        0x0E,
+        0x01,
+    },
+    {
+        0x00,
+        0x14,
+        0x01,
+    },
+    {
+        0xFF,
+        0x08,
+        0x00,
+    },
 };
 
 struct NpcDatStruct {
@@ -2277,7 +2303,7 @@ void daNpcRoten_c::eventSetItemInit() {
     u8 itemIdx = l_item_dat[mNpcNo][field_0x9BE];
     cXyz pos(0.0f, 0.0f, 0.0f);
     u8 itemNo = itemIdx + FLOWER_1;
-    field_0x6F8 = fopAcM_createItemForPresentDemo(&pos, itemNo, 9, -1, fopAcM_GetRoomNo(this));
+    field_0x6F8 = fopAcM_createItemForPresentDemo(&pos, itemNo, daDitem_c::FLAG_UNK01 | daDitem_c::FLAG_UNK08, -1, fopAcM_GetRoomNo(this));
 }
 
 /* 000028C4-0000290C       .text eventSetItem__12daNpcRoten_cFv */
@@ -2323,7 +2349,7 @@ void daNpcRoten_c::eventGetItemInit(int staffIdx) {
 
         u8 itemNo = FLOWER_1;
         itemNo += itemIdx; // fakematch?
-        pcId = fopAcM_createItemForPresentDemo(&current.pos, itemNo, 1, -1, fopAcM_GetRoomNo(this));
+        pcId = fopAcM_createItemForPresentDemo(&current.pos, itemNo, daDitem_c::FLAG_UNK01, -1, fopAcM_GetRoomNo(this));
     }
 
     if(pcId != fpcM_ERROR_PROCESS_ID_e) {

@@ -179,15 +179,15 @@ public:
     void setup(JPABaseEmitter*, const cXyz*, const csXyz*, s8);
     void end();
     ~daPy_followEcallBack_c() {}
+
     JPABaseEmitter* getEmitter() { return mpEmitter; }
-    void setPos(const cXyz* pos) { mPos = *pos; }
     cXyz& getPos() { return mPos; }
+    void setPos(const cXyz* pos) { mPos = *pos; }
     void setAngle(s16 x, s16 y, s16 z) { mAngle.set(x, y, z); }
 
     /* 0x04 */ JPABaseEmitter* mpEmitter;
     /* 0x08 */ cXyz mPos;
     /* 0x14 */ csXyz mAngle;
-    /* 0x1A */ u8 field_0x1A[0x1C - 0x1A];
 };  // Size: 0x1C
 
 class daPy_waterDropEcallBack_c : public daPy_followEcallBack_c {
@@ -326,7 +326,7 @@ public:
     /* 0x030 */ f32 field_0x030;
     /* 0x034 */ dBgS_LinkGndChk field_0x034;
     /* 0x088 */ Mtx field_0x088[3];
-};
+};  // Size: 0x118
 
 struct daPy_aura_c {
 public:
@@ -1011,7 +1011,7 @@ public:
     BOOL checkNextActionFromButton();
     void setShieldGuard();
     BOOL checkItemModeActorPointer();
-    BOOL checkNextActionItemFly();
+    void checkNextActionItemFly();
     BOOL checkNextMode(int);
     BOOL checkIceSlipFall();
     void setFrontWallType();
