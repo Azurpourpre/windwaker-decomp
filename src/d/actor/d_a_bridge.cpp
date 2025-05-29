@@ -123,8 +123,227 @@ void kikuzu_set(bridge_class* i_this, cXyz* pos) {
 }
 
 /* 00000614-000011EC       .text daBridge_Draw__FP12bridge_class */
-static BOOL daBridge_Draw(bridge_class*) {
-    /* Nonmatching */
+static BOOL daBridge_Draw(bridge_class* i_this) {
+    // Non matching : Regalloc
+    fopAc_ac_c* a_this = i_this;
+
+    if(i_this->mbStopDraw){
+        return TRUE;
+    }
+
+    br_s* br_i = i_this->mBr;
+    for(int i = 0; i < i_this->mBrCount; i++, br_i++){
+        g_env_light.setLightTevColorType(br_i->mpModel, &a_this->tevStr);
+        dComIfGd_setListBG();
+        mDoExt_modelUpdateDL(br_i->mpModel);
+        dComIfGd_setList();
+        
+        if(br_i->m408 & 4){
+            mDoMtx_YrotS(*calc_mtx, i_this->m0300);
+            cXyz local_bc(0.0f, 0.0f, 1.0f), local_c8;
+            MtxPosition(&local_bc, &local_c8);
+            cXyz uXyz = br_i->m11C[0] - br_i->m11C[1], local_e0 = br_i->m0F8[0] - br_i->m0F8[1];
+
+            if(not (i_this->mTypeBits & 1)){
+                u8 line_sz;
+                if(i_this->mTypeBits & 8){
+                    line_sz = 5;
+                }
+                else {
+                    line_sz = 3;
+                }
+
+                u8* i_line_0_sz = br_i->mLineMat1.mpLines[0].mpSize, *i_line_2_sz = br_i->mLineMat1.mpLines[2].mpSize;
+                if(not (br_i->m408 & 1)){
+                    for(int j = 5; j != 0; i_line_0_sz++, i_line_2_sz++, j--){
+                        *i_line_2_sz = line_sz;
+                        *i_line_0_sz = line_sz;
+                    }
+                }
+                else {
+                    cXyz *i_line_0_seg = br_i->mLineMat1.mpLines[0].mpSegments, *i_line_2_seg = br_i->mLineMat1.mpLines[2].mpSegments;
+                    uXyz.x *= 0.25f;
+                    uXyz.y *= 0.25f;
+                    uXyz.z *= 0.25f;
+                    float fVar3 = br_i->m3A0[0] * JMASSin(i_this->m0300 * 5);
+                    for(int j = 0; j < 5; j++, i_line_0_seg++, i_line_2_seg++, i_line_0_sz++, i_line_2_sz++){
+                        *i_line_0_sz = line_sz;
+                        float fVar2;
+                        if(j == 2){
+                            fVar2 = 1.0f;
+                            if(br_i->m3A4 <= 1){
+                                *i_line_0_sz = 0;
+                            }
+                            else if(br_i->m3A4 == 2){
+                                *i_line_0_sz = 1;
+                            }
+                            br_i->m3A8[0].set(*i_line_0_seg);
+                        }
+                        else if(j == 1 || j == 3){
+                            fVar2 = 0.7f;
+                        }
+                        else {
+                            fVar2 = 0.0f;
+                        }
+
+                        local_bc.x = uXyz.z * j + fVar3 * local_c8.x * fVar2;
+                        local_bc.y = uXyz.y * j;
+                        local_bc.z = uXyz.x * j + fVar3 * local_c8.z * fVar2;
+                        *i_line_0_seg = br_i->m11C[1] + local_bc;
+                        i_line_2_seg->set(br_i->m11C[0]);
+                        *i_line_2_sz = 0;
+                    }
+                }
+
+                u8 *i_line_1_sz = br_i->mLineMat1.mpLines[1].mpSize, *i_line_3_sz = br_i->mLineMat1.mpLines[3].mpSize;
+                if(not (br_i->m408 & 2)){
+                    for(int j = 5; j != 0; j--, i_line_1_sz++, i_line_3_sz++){
+                        *i_line_3_sz = line_sz;
+                        *i_line_1_sz = line_sz;
+                    }
+                }
+                else {
+                    cXyz *i_line_1_seg = br_i->mLineMat1.mpLines[1].mpSegments, *i_line_3_seg = br_i->mLineMat1.mpLines[3].mpSegments;
+                    local_e0.x *= 0.25f;
+                    local_e0.y *= 0.25f;
+                    local_e0.z *= 0.25f;
+                    float fVar3 = br_i->m3A0[1] * JMASSin(i_this->m0300 * 5);
+                    for(int j = 0; j < 5; j++, i_line_1_seg++, i_line_3_seg++, i_line_1_sz++, i_line_3_sz++){
+                        *i_line_1_sz = line_sz;
+                        float fVar2;
+                        if(j == 2){
+                            fVar2 = 1.0f;
+                            if(br_i->m3A5 <= 1){
+                                *i_line_1_sz = 0;
+                            }
+                            else if(br_i->m3A5 == 2){
+                                *i_line_1_sz = 1;
+                            }
+                            br_i->m3A8[1] = *i_line_1_seg;
+                        }
+                        else if(j == 1 || j == 3){
+                            fVar2 = 0.7f;
+                        }
+                        else {
+                            fVar2 = 0.0f;
+                        }
+
+                        local_bc.x = local_e0.x * j + fVar3 * local_c8.x * fVar2;
+                        local_bc.y = local_e0.y * j;
+                        local_bc.z = local_e0.z * j + fVar3 * local_c8.z * fVar2;
+                        i_line_1_seg->set(br_i->m0F8[1] + local_bc);
+                        i_line_3_seg->set(br_i->m0F8[0]);
+                        *i_line_3_sz = 0;
+                    }
+                }
+                GXColor local_12c = {150, 150, 150, 0xff};
+                br_i->mLineMat1.update(5, local_12c, &a_this->tevStr);
+                dComIfGd_set3DlineMat(&br_i->mLineMat1);
+            }
+            else {
+                if(br_i->m408 & 1) {
+                    s16 uXyz_yz_angle = -cM_atan2s(uXyz.y, uXyz.z);
+                    int iVar4 = cM_atan2s(uXyz.x, std::sqrtf(uXyz.y * uXyz.y + uXyz.z * uXyz.z));
+                    MtxTrans(br_i->m11C[1].x, br_i->m11C[1].y, br_i->m11C[1].z, false);
+                    short sVar8 = br_i->m3A0[0], sVar7;
+                    if(sVar8 != 0){
+                        sVar8 = sVar8 * JMASSin(i_this->m0300 * 6) * 100.0f;
+                        sVar7 = i_this->m0300;
+                    }
+                    else {
+                        sVar7 = 0;
+                        sVar8 = 0;
+                    }
+                    mDoMtx_YrotM(*calc_mtx, sVar7);
+                    mDoMtx_XrotM(*calc_mtx, sVar8 + uXyz_yz_angle);
+                    mDoMtx_YrotM(*calc_mtx, iVar4);
+                    br_i->mpModelRope0->setBaseTRMtx(*calc_mtx);
+                    g_env_light.setLightTevColorType(br_i->mpModelRope0, &a_this->tevStr);
+                    mDoExt_modelUpdateDL(br_i->mpModelRope0);
+                }
+                if((br_i->m408 & 2) != 0){
+                    s16 local_e0_yz_angle = -cM_atan2s(local_e0.y, local_e0.z);
+                    int iVar4 = cM_atan2s(local_e0.x, std::sqrtf(local_e0.y * local_e0.y + local_e0.z * local_e0.z));
+                    MtxTrans(br_i->m0F8[1].x, br_i->m0F8[1].y, br_i->m0F8[1].z, false);
+                    short sVar8 = br_i->m3A0[1], sVar7;
+                    if(sVar8 != 0){
+                        sVar8 = sVar8 * JMASSin(i_this->m0300 * 6) * 100.0f;
+                        sVar7 = i_this->m0300;
+                    }
+                    else {
+                        sVar7 = 0;
+                        sVar8 = 0;
+                    }
+                    
+                    mDoMtx_YrotM(*calc_mtx, sVar7);
+                    mDoMtx_XrotM(*calc_mtx, sVar8 + local_e0_yz_angle);
+                    mDoMtx_YrotM(*calc_mtx, iVar4);
+                    br_i->mpModelRope1->setBaseTRMtx(*calc_mtx);
+                    g_env_light.setLightTevColorType(br_i->mpModelRope1, &a_this->tevStr);
+                    mDoExt_modelUpdateDL(br_i->mpModelRope1);
+                }
+            }
+        }
+    }
+
+    if((i_this->mTypeBits & 5) == 0){
+        cXyz local_ec(-120.0f, 350.0f, -40.0f), local_f8, *pcVar5;
+        mDoMtx_YrotS(*calc_mtx, a_this->home.angle.y);
+        MtxPosition(&local_ec, &local_f8);
+        pcVar5 = i_this->mLineMat.mpLines->mpSegments;
+        pcVar5->x = a_this->home.pos.x + local_f8.x;
+        pcVar5->y = a_this->home.pos.y + local_f8.y;
+        pcVar5->z = a_this->home.pos.z + local_f8.z;
+        local_ec.z *= -1.0f;
+
+        pcVar5 = i_this->mLineMat.mpLines->mpSegments + i_this->m030C + 1;
+        if((i_this->mTypeBits & 2) != 0){
+            bridge_class* aite = i_this->mpAite;
+            if(aite != NULL){
+                pcVar5->set(aite->m032C);
+            }
+        }
+        else {
+            MtxPosition(&local_ec, &local_f8);
+            pcVar5->x = i_this->mEndPos.x + local_f8.x;
+            pcVar5->y = i_this->mEndPos.y + local_f8.y;
+            pcVar5->z = i_this->mEndPos.z + local_f8.z;
+        }
+        local_ec.x *= -1.0f;
+        local_ec.z *= -1.0f;
+        MtxPosition(&local_ec, &local_f8);
+        pcVar5 = i_this->mLineMat.mpLines[1].mpSegments;
+        pcVar5->x = a_this->home.pos.x + local_f8.x;
+        pcVar5->y = a_this->home.pos.y + local_f8.y;
+        pcVar5->z = a_this->home.pos.z + local_f8.z;
+        local_ec.z *= -1.0f;
+        pcVar5 = i_this->mLineMat.mpLines[1].mpSegments + i_this->m030C + 1;
+        if((i_this->mTypeBits & 2) != 0){
+            bridge_class* aite = i_this->mpAite;
+            if(aite != NULL){
+                pcVar5->set(aite->m0320);
+            }
+        }
+        else {
+            MtxPosition(&local_ec, &local_f8);
+            pcVar5->x = i_this->mEndPos.x + local_f8.x;
+            pcVar5->y = i_this->mEndPos.y + local_f8.y;
+            pcVar5->z = i_this->mEndPos.z + local_f8.z;
+        }
+
+        float fVar;
+        if((i_this->mTypeBits & 8) != 0){
+            fVar = 6.5f;
+        }
+        else {
+            fVar = 4.0f;
+        }
+        GXColor local_130 = {150, 150, 150, 0xff};
+        i_this->mLineMat.update(i_this->m030C + 2, fVar, local_130, 0, &a_this->tevStr);
+        dComIfGd_set3DlineMat(&i_this->mLineMat);
+    }
+
+    return TRUE;
 }
 
 /* 000011EC-00001580       .text control1__FP12bridge_classP4br_s */
