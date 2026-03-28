@@ -176,7 +176,18 @@ bool daObjVds::Act_c::_execute() {
 
 /* 000014EC-000015A8       .text _draw__Q28daObjVds5Act_cFv */
 bool daObjVds::Act_c::_draw() {
-    /* Nonmatching */
+    dKy_getEnvlight().settingTevStruct(TEV_TYPE_BG0, &this->current.pos, &this->tevStr);
+    dKy_getEnvlight().setLightTevColorType(this->M_anm0->getModel(), &this->tevStr);
+    dKy_getEnvlight().setLightTevColorType(this->M_anm1->getModel(), &this->tevStr);
+
+    J3DModelData* modelData = this->M_anm0->getModel()->getModelData();
+    this->m2D4.entry(modelData, this->m2D4.getFrame());
+    modelData = this->M_anm1->getModel()->getModelData();
+    this->m2F8.entry(modelData, this->m2F8.getFrame());
+    this->M_anm0->updateDL();
+    this->M_anm1->updateDL();
+
+    return true;
 }
 
 namespace daObjVds {
