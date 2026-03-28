@@ -57,8 +57,7 @@ namespace daObjVds {
         /* 0x31C */ s32 m31C;
         /* 0x320 */ s32 m320;
         /* 0x324 */ fpc_ProcID m324[2];
-        /* 0x32C */ f32 m32C;
-        /* 0x330 */ f32 m330;
+        /* 0x32C */ f32 m32C[2];
         /* 0x334 */ s16 mEventIdx;
         /* 0x336 */ s16 m336;
         /* 0x338 */ u16 m338;

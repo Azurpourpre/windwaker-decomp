@@ -86,7 +86,15 @@ BOOL daObjVds::Act_c::process_off_init() {
 
 /* 000003C8-00000474       .text process_off_main__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::process_off_main() {
-    /* Nonmatching */
+    for(int i = 0; i < 2; i++){
+        fopAc_ac_c* actor = fopAcM_SearchByID(this->m324[i]);
+        this->m32C[i] = actor[5].eyePos.x;
+    }
+
+    int prm = daObj::PrmAbstract(this, 8, 0);
+    if(dComIfGs_isSwitch(prm, fopAcM_GetHomeRoomNo(this))){
+        process_init(TRUE);
+    }
 }
 
 /* 00000474-000004F0       .text process_on_init__Q28daObjVds5Act_cFv */
@@ -205,8 +213,8 @@ bool daObjVds::Act_c::_execute() {
     Event_exe();
     PlayLoopJointAnimation();
 
-    this->m2D4.setFrame(this->m32C * (this->M_brk_data0->getFrameMax() - 1));
-    this->m2F8.setFrame(this->m330 * (this->M_brk_data1->getFrameMax() - 1));
+    this->m2D4.setFrame(this->m32C[0] * (this->M_brk_data0->getFrameMax() - 1));
+    this->m2F8.setFrame(this->m32C[1] * (this->M_brk_data1->getFrameMax() - 1));
     
     process_common();
     process_main();
