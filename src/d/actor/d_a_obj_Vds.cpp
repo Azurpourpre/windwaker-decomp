@@ -158,7 +158,20 @@ void daObjVds::Act_c::set_mtx() {
 
 /* 00001420-000014EC       .text _execute__Q28daObjVds5Act_cFv */
 bool daObjVds::Act_c::_execute() {
-    /* Nonmatching */
+    Event_exe();
+    PlayLoopJointAnimation();
+
+    this->m2D4.setFrame(this->m32C * (this->M_brk_data0->getFrameMax() - 1));
+    this->m2F8.setFrame(this->m330 * (this->M_brk_data1->getFrameMax() - 1));
+    
+    process_common();
+    process_main();
+    set_mtx();
+    
+    if(this->m314 != NULL)
+        this->m314->Move();
+    
+    return true;
 }
 
 /* 000014EC-000015A8       .text _draw__Q28daObjVds5Act_cFv */
