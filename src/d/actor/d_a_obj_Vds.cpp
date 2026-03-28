@@ -35,13 +35,24 @@ void daObjVds::Act_c::set_first_process() {
 }
 
 /* 000001E8-00000214       .text ds_search_switchCB__8daObjVdsFPvPv */
-void daObjVds::ds_search_switchCB(void*, void*) {
-    /* Nonmatching */
+static void daObjVds::ds_search_switchCB(void* i_act, void* i_VdsAct) {
+    daObjVds::Act_c* pVdsAct = static_cast<daObjVds::Act_c*>(i_VdsAct);
+    fopAc_ac_c* pAct = static_cast<fopAc_ac_c*>(i_act);
+    pVdsAct->search_switchCB(pAct);
 }
 
 /* 00000214-000002B0       .text search_switchCB__Q28daObjVds5Act_cFP10fopAc_ac_c */
-void daObjVds::Act_c::search_switchCB(fopAc_ac_c*) {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
+    if(fopAc_IsActor(i_act) && fopAcM_GetName(this) == PROC_Obj_Swlight){
+        for(int i = 0; i < 2; i++){
+            if(this->m324[i] == -1){
+                this->m324[i] = fopAcM_GetID(i_act);
+                break;
+            }
+        }
+    }
+
+    return FALSE;
 }
 
 /* 000002EC-000003C8       .text process_off_init__Q28daObjVds5Act_cFv */

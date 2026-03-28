@@ -19,7 +19,7 @@ namespace daObjVds {
         BOOL SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float);
         BOOL PlayLoopJointAnimation();
         void set_first_process();
-        void search_switchCB(fopAc_ac_c*);
+        BOOL search_switchCB(fopAc_ac_c*);
         void process_off_init();
         void process_off_main();
         void process_on_init();
@@ -56,7 +56,7 @@ namespace daObjVds {
         /* 0x318 */ u32 m318;
         /* 0x31C */ s32 m31C;
         /* 0x320 */ s32 m320;
-        /* 0x324 */ s32 m324[2];
+        /* 0x324 */ fpc_ProcID m324[2];
         /* 0x32C */ f32 m32C;
         /* 0x330 */ f32 m330;
         /* 0x334 */ s16 mEventIdx;
