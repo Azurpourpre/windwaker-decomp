@@ -7,6 +7,7 @@
 #include "d/actor/d_a_obj_Vds.h"
 #include "d/d_procname.h"
 #include "d/d_priority.h"
+#include "d/d_a_obj.h"
 
 const char daObjVds::Act_c::M_arcname[4] = "Vds";
 
@@ -28,7 +29,9 @@ BOOL daObjVds::Act_c::PlayLoopJointAnimation() {
 
 /* 00000188-000001E8       .text set_first_process__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::set_first_process() {
-    /* Nonmatching */
+    int switchIndex = daObj::PrmAbstract(this, 8, 0);
+    BOOL isSwitch = dComIfGs_isSwitch(switchIndex, fopAcM_GetHomeRoomNo(this));
+    process_init(isSwitch);
 }
 
 /* 000001E8-00000214       .text ds_search_switchCB__8daObjVdsFPvPv */
@@ -62,7 +65,7 @@ void daObjVds::Act_c::process_on_main() {
 }
 
 /* 000004F4-000005C0       .text process_init__Q28daObjVds5Act_cFi */
-void daObjVds::Act_c::process_init(int) {
+void daObjVds::Act_c::process_init(BOOL) {
     /* Nonmatching */
 }
 

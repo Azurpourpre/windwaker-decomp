@@ -24,7 +24,7 @@ namespace daObjVds {
         void process_off_main();
         void process_on_init();
         void process_on_main();
-        void process_init(int);
+        void process_init(BOOL);
         void process_main();
         void process_common();
         void create_point_light(int, cXyz*);
