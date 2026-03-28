@@ -56,8 +56,32 @@ BOOL daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
 }
 
 /* 000002EC-000003C8       .text process_off_init__Q28daObjVds5Act_cFv */
-void daObjVds::Act_c::process_off_init() {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::process_off_init() {
+
+    if(
+        this->m2D4.init(
+            this->M_anm0->getModel()->getModelData(),
+            this->M_brk_data0,
+            true,
+            J3DFrameCtrl::EMode_NONE,
+            1, 0, -1, true, 0)
+    ){
+        this->m2D4.setPlaySpeed(0);
+        if(
+            this->m2F8.init(
+                this->M_anm1->getModel()->getModelData(),
+                this->M_brk_data1,
+                true,
+                J3DFrameCtrl::EMode_NONE,
+                1, 0, -1, true, 0
+            )
+        ){
+            this->m2F8.setPlaySpeed(0);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }
 
 /* 000003C8-00000474       .text process_off_main__Q28daObjVds5Act_cFv */

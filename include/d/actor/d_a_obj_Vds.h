@@ -20,7 +20,7 @@ namespace daObjVds {
         BOOL PlayLoopJointAnimation();
         void set_first_process();
         BOOL search_switchCB(fopAc_ac_c*);
-        void process_off_init();
+        BOOL process_off_init();
         void process_off_main();
         void process_on_init();
         void process_on_main();
@@ -47,11 +47,11 @@ namespace daObjVds {
         /* 0x2CC */ mDoExt_McaMorf* M_anm0;
         /* 0x2D0 */ J3DAnmTransformKey* M_bck_data0;
         /* 0x2D4 */ mDoExt_brkAnm m2D4;
-        /* 0x2EC */ J3DAnmTransformKey* M_brk_data0;
+        /* 0x2EC */ J3DAnmTevRegKey* M_brk_data0;
         /* 0x2F0 */ mDoExt_McaMorf* M_anm1;
         /* 0x2F4 */ J3DAnmTransformKey* M_bck_data1;
         /* 0x2F8 */ mDoExt_brkAnm m2F8;
-        /* 0x310 */ J3DAnmTransformKey* M_brk_data1;
+        /* 0x310 */ J3DAnmTevRegKey* M_brk_data1;
         /* 0x314 */ dBgW* m314;
         /* 0x318 */ u32 m318;
         /* 0x31C */ s32 m31C;
