@@ -8,6 +8,8 @@
 #include "d/d_procname.h"
 #include "d/d_priority.h"
 
+const char daObjVds::Act_c::M_arcname[4] = "Vds";
+
 /* 00000078-00000134       .text SetLoopJointAnimation__Q28daObjVds5Act_cFP18J3DAnmTransformKeyP18J3DAnmTransformKeyff */
 void daObjVds::Act_c::SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float) {
     /* Nonmatching */
@@ -94,7 +96,7 @@ void daObjVds::Act_c::Event_exe() {
 }
 
 /* 00000A28-00000A4C       .text solidHeapCB__Q28daObjVds5Act_cFP10fopAc_ac_c */
-void daObjVds::Act_c::solidHeapCB(fopAc_ac_c*) {
+BOOL daObjVds::Act_c::solidHeapCB(fopAc_ac_c*) {
     /* Nonmatching */
 }
 
@@ -105,12 +107,48 @@ void daObjVds::Act_c::create_heap() {
 
 /* 00001020-000011EC       .text _create__Q28daObjVds5Act_cFv */
 cPhs_State daObjVds::Act_c::_create() {
-    /* Nonmatching */
+    fopAcM_SetupActor(this, daObjVds::Act_c);
+
+    cPhs_State ret = dComIfG_resLoad(&this->mPhs, M_arcname);
+    if(ret == cPhs_COMPLEATE_e){
+        if(fopAcM_entrySolidHeap(this, solidHeapCB, 0)){
+            set_first_process();
+            fopAcM_SetMtx(this, this->M_anm0->getModel()->getBaseTRMtx());
+            fopAcM_setCullSizeBox(this, -2000, -2000, -2000, 2000, 2000, 2000);
+            dComIfG_Bgsp()->Regist(this->m314, this);
+            this->m314->SetCrrFunc(NULL);
+            Event_init();
+            this->m338 = dComIfGp_evmng_getEventIdx("Vds");
+            for(int i = 0; i < 2; i++){
+                this->m324[i] = -1;
+            }
+        }
+    }
+    else {
+        ret = cPhs_ERROR_e;
+    }
+
+    return ret;
 }
 
 /* 000012D4-00001368       .text _delete__Q28daObjVds5Act_cFv */
 bool daObjVds::Act_c::_delete() {
-    /* Nonmatching */
+    if(this->heap != NULL && this->m314 != NULL){
+        int bgwId = this->m314->GetId();
+        
+        bool doRelease;
+        if(0 <= bgwId && bgwId < 256)
+            doRelease = true;
+        else
+            doRelease = false;
+        
+        if(doRelease)
+            dComIfG_Bgsp()->Release(this->m314);
+    }
+    delete_point_light();
+    dComIfG_resDelete(&this->mPhs, M_arcname);
+
+    return true;
 }
 
 /* 00001368-00001420       .text set_mtx__Q28daObjVds5Act_cFv */
