@@ -20,8 +20,10 @@ BOOL daObjVds::Act_c::SetLoopJointAnimation(J3DAnmTransformKey* i_bckAnm0, J3DAn
 }
 
 /* 00000134-00000188       .text PlayLoopJointAnimation__Q28daObjVds5Act_cFv */
-void daObjVds::Act_c::PlayLoopJointAnimation() {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::PlayLoopJointAnimation() {
+    this->M_anm0->play(NULL, 0, 0);
+    this->M_anm1->play(NULL, 0, 0);
+    return TRUE;
 }
 
 /* 00000188-000001E8       .text set_first_process__Q28daObjVds5Act_cFv */

@@ -17,7 +17,7 @@ namespace daObjVds {
         void is_switch() const {}
     
         BOOL SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float);
-        void PlayLoopJointAnimation();
+        BOOL PlayLoopJointAnimation();
         void set_first_process();
         void search_switchCB(fopAc_ac_c*);
         void process_off_init();
