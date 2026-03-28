@@ -11,8 +11,12 @@
 const char daObjVds::Act_c::M_arcname[4] = "Vds";
 
 /* 00000078-00000134       .text SetLoopJointAnimation__Q28daObjVds5Act_cFP18J3DAnmTransformKeyP18J3DAnmTransformKeyff */
-void daObjVds::Act_c::SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float) {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::SetLoopJointAnimation(J3DAnmTransformKey* i_bckAnm0, J3DAnmTransformKey* i_bckAnm1, float speed, float morf) {
+    this->M_anm0->setAnm(i_bckAnm0, J3DFrameCtrl::EMode_LOOP, morf, speed, 0, -1, NULL);
+    this->M_anm1->setAnm(i_bckAnm1, J3DFrameCtrl::EMode_LOOP, morf, speed, 0, -1, NULL);
+    this->m318 = 1;
+    
+    return TRUE;
 }
 
 /* 00000134-00000188       .text PlayLoopJointAnimation__Q28daObjVds5Act_cFv */
