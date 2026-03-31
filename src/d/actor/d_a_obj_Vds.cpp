@@ -98,13 +98,21 @@ void daObjVds::Act_c::process_off_main() {
 }
 
 /* 00000474-000004F0       .text process_on_init__Q28daObjVds5Act_cFv */
-void daObjVds::Act_c::process_on_init() {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::process_on_init() {
+    if(SetLoopJointAnimation(this->M_bck_data0, this->M_bck_data1, 1, 0)){
+        for(int i = 0; i < 2; i++){
+            this->m32C[i] = 1;
+        }
+
+        return TRUE;
+    }
+    else
+        return FALSE;
 }
 
 /* 000004F0-000004F4       .text process_on_main__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::process_on_main() {
-    /* Nonmatching */
+    return;
 }
 
 /* 000004F4-000005C0       .text process_init__Q28daObjVds5Act_cFi */

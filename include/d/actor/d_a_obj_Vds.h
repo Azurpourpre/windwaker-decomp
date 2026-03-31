@@ -22,7 +22,7 @@ namespace daObjVds {
         BOOL search_switchCB(fopAc_ac_c*);
         BOOL process_off_init();
         void process_off_main();
-        void process_on_init();
+        BOOL process_on_init();
         void process_on_main();
         void process_init(BOOL);
         void process_main();
