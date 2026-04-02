@@ -16,6 +16,8 @@ namespace daObjVds {
         typedef BOOL (daObjVds::Act_c::*procInitFun_t)();   
         typedef void (daObjVds::Act_c::*procMainFun_t)();
     
+        enum VDS_SIDES {S0 = 0, S1 = 1};
+
         // Globals variables
         static const char M_arcname[4];
 

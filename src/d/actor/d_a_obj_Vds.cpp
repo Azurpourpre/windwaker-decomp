@@ -157,8 +157,18 @@ void daObjVds::Act_c::process_common() {
 }
 
 /* 000007EC-0000087C       .text create_point_light__Q28daObjVds5Act_cFiP4cXyz */
-void daObjVds::Act_c::create_point_light(int, cXyz*) {
-    /* Nonmatching */
+void daObjVds::Act_c::create_point_light(int i_param1, cXyz* i_param2){
+    VDS_SIDES side = (i_param1 & 1) ? S1 : S0;
+
+    this->m33C[side].mPos.set(*i_param2);
+    this->m37C->set(*i_param2);
+    
+    this->m33C[side].mColor.r = 0x400;
+    this->m33C[side].mColor.g = 0x400;
+    this->m33C[side].mColor.b = 0x400;
+    this->m33C[side].mPower = 0;
+    this->m33C[side].mFluctuation = 0;
+    dKy_plight_set(&this->m33C[side]);
 }
 
 /* 0000087C-00000900       .text execute_point_light__Q28daObjVds5Act_cFv */
