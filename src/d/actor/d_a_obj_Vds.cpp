@@ -116,8 +116,23 @@ void daObjVds::Act_c::process_on_main() {
 }
 
 /* 000004F4-000005C0       .text process_init__Q28daObjVds5Act_cFi */
-void daObjVds::Act_c::process_init(BOOL) {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::process_init(int doExec) {
+    static procFun_t init_table[2];
+    static s8 init;
+
+    if(!init){
+        init_table[0] = &daObjVds::Act_c::process_off_init;
+        init_table[1] = &daObjVds::Act_c::process_on_init;
+        init = 1;
+    }
+
+    if(0 <= doExec && doExec < 2 && (this->*init_table[doExec])() != FALSE){
+        this->m31C = doExec;
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
 }
 
 /* 000005C0-0000065C       .text process_main__Q28daObjVds5Act_cFv */

@@ -12,8 +12,13 @@ namespace daObjVds {
 
     class Act_c : public fopAc_ac_c {
     public:
+        // Enums, Structs, Types
+        typedef BOOL (daObjVds::Act_c::*procFun_t)();    
+    
+        // Globals variables
         static const char M_arcname[4];
 
+        // Methods
         void is_switch() const {}
     
         BOOL SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float);
@@ -24,7 +29,7 @@ namespace daObjVds {
         void process_off_main();
         BOOL process_on_init();
         void process_on_main();
-        void process_init(BOOL);
+        BOOL process_init(int);
         void process_main();
         void process_common();
         void create_point_light(int, cXyz*);
@@ -54,7 +59,7 @@ namespace daObjVds {
         /* 0x310 */ J3DAnmTevRegKey* M_brk_data1;
         /* 0x314 */ dBgW* m314;
         /* 0x318 */ u32 m318;
-        /* 0x31C */ s32 m31C;
+        /* 0x31C */ bool m31C;
         /* 0x320 */ s32 m320;
         /* 0x324 */ fpc_ProcID m324[2];
         /* 0x32C */ f32 m32C[2];
