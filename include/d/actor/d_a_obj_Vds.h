@@ -13,7 +13,8 @@ namespace daObjVds {
     class Act_c : public fopAc_ac_c {
     public:
         // Enums, Structs, Types
-        typedef BOOL (daObjVds::Act_c::*procFun_t)();    
+        typedef BOOL (daObjVds::Act_c::*procInitFun_t)();   
+        typedef void (daObjVds::Act_c::*procMainFun_t)();
     
         // Globals variables
         static const char M_arcname[4];
@@ -59,7 +60,7 @@ namespace daObjVds {
         /* 0x310 */ J3DAnmTevRegKey* M_brk_data1;
         /* 0x314 */ dBgW* m314;
         /* 0x318 */ u32 m318;
-        /* 0x31C */ bool m31C;
+        /* 0x31C */ u8 m31C;
         /* 0x320 */ s32 m320;
         /* 0x324 */ fpc_ProcID m324[2];
         /* 0x32C */ f32 m32C[2];
