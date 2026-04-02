@@ -8,15 +8,13 @@
 class J3DAnmTransformKey;
 
 namespace daObjVds {
-    static void ds_search_switchCB(void*, void*);
+    static void* ds_search_switchCB(void*, void*);
 
     class Act_c : public fopAc_ac_c {
     public:
         // Enums, Structs, Types
         typedef BOOL (daObjVds::Act_c::*procInitFun_t)();   
         typedef void (daObjVds::Act_c::*procMainFun_t)();
-    
-        enum VDS_SIDES {S0 = 0, S1 = 1};
 
         // Globals variables
         static const char M_arcname[4];
@@ -27,7 +25,7 @@ namespace daObjVds {
         BOOL SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float);
         BOOL PlayLoopJointAnimation();
         void set_first_process();
-        BOOL search_switchCB(fopAc_ac_c*);
+        void* search_switchCB(fopAc_ac_c*);
         BOOL process_off_init();
         void process_off_main();
         BOOL process_on_init();

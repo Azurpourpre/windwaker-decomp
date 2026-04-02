@@ -35,14 +35,14 @@ void daObjVds::Act_c::set_first_process() {
 }
 
 /* 000001E8-00000214       .text ds_search_switchCB__8daObjVdsFPvPv */
-static void daObjVds::ds_search_switchCB(void* i_act, void* i_VdsAct) {
+static void* daObjVds::ds_search_switchCB(void* i_act, void* i_VdsAct) {
     daObjVds::Act_c* pVdsAct = static_cast<daObjVds::Act_c*>(i_VdsAct);
     fopAc_ac_c* pAct = static_cast<fopAc_ac_c*>(i_act);
-    pVdsAct->search_switchCB(pAct);
+    return pVdsAct->search_switchCB(pAct);
 }
 
 /* 00000214-000002B0       .text search_switchCB__Q28daObjVds5Act_cFP10fopAc_ac_c */
-BOOL daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
+void* daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
     if(fopAc_IsActor(i_act) && fopAcM_GetName(this) == PROC_Obj_Swlight){
         for(int i = 0; i < 2; i++){
             if(this->m324[i] == -1){
@@ -52,7 +52,7 @@ BOOL daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
         }
     }
 
-    return FALSE;
+    return NULL;
 }
 
 /* 000002EC-000003C8       .text process_off_init__Q28daObjVds5Act_cFv */
@@ -153,15 +153,48 @@ void daObjVds::Act_c::process_main() {
 
 /* 0000065C-000007EC       .text process_common__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::process_common() {
-    /* Nonmatching */
+    switch(m320){
+        case 0:
+            for(int i = 0; i < 2; i++){
+                this->m324[i] = -1;
+            }
+
+            fopAcIt_Judge(ds_search_switchCB, this);
+            if(this->m324[0] != -1 && this->m324[1] != -1){
+                fopAc_ac_c *actor0 = fopAcM_SearchByID(this->m324[0]), *actor1 = fopAcM_SearchByID(this->m324[1]);
+                if(actor0 != NULL && actor1 != NULL){
+                    s16 angle_diff = actor0->shape_angle.y - this->shape_angle.y;
+                    if(angle_diff >= 0){
+                        fpc_ProcID swap = this->m324[0];
+                        this->m324[0] = this->m324[1];
+                        this->m324[1] = swap;
+                    }
+                    this->m320 = 1;
+                }
+            }
+            break;
+        
+        case 1:
+            fopAc_ac_c *actor0 = fopAcM_SearchByID(this->m324[0]), *actor1 = fopAcM_SearchByID(this->m324[1]);
+            if(actor0 != NULL && actor1 != NULL){
+                create_point_light(0, fopAcM_GetPosition_p(actor0));
+                create_point_light(1, fopAcM_GetPosition_p(actor1));
+                this->m320 = 2;
+            }
+            break;
+        
+        case 2:
+            execute_point_light();
+            break;
+    }
 }
 
 /* 000007EC-0000087C       .text create_point_light__Q28daObjVds5Act_cFiP4cXyz */
-void daObjVds::Act_c::create_point_light(int i_param1, cXyz* i_param2){
-    VDS_SIDES side = (i_param1 & 1) ? S1 : S0;
+void daObjVds::Act_c::create_point_light(int i_side, cXyz* i_actorPos){
+    u8 side = i_side & 1;
 
-    this->m33C[side].mPos.set(*i_param2);
-    this->m37C->set(*i_param2);
+    this->m33C[side].mPos.set(*i_actorPos);
+    this->m37C->set(*i_actorPos);
     
     this->m33C[side].mColor.r = 0x400;
     this->m33C[side].mColor.g = 0x400;
