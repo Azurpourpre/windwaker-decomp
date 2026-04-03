@@ -376,7 +376,12 @@ bool daObjVds::Act_c::_delete() {
 
 /* 00001368-00001420       .text set_mtx__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::set_mtx() {
-    /* Nonmatching */
+    this->M_anm0->getModel()->setBaseScale(this->scale);
+    mDoMtx_stack_c::transS(this->current.pos);
+    mDoMtx_stack_c::ZXYrotM(this->shape_angle);
+    this->M_anm0->getModel()->setBaseTRMtx(mDoMtx_stack_c::now);
+    this->M_anm1->getModel()->setBaseTRMtx(mDoMtx_stack_c::now);
+    MTXCopy(mDoMtx_stack_c::now, this->m29C);
 }
 
 /* 00001420-000014EC       .text _execute__Q28daObjVds5Act_cFv */
