@@ -206,7 +206,15 @@ void daObjVds::Act_c::create_point_light(int i_side, cXyz* i_actorPos){
 
 /* 0000087C-00000900       .text execute_point_light__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::execute_point_light() {
-    /* Nonmatching */
+    cXyz newPos;
+    for(int i = 0; i < 2; i++){
+        this->m33C[i].mPower = this->m32C[i] * 2200.f;
+        newPos.set(this->m37C[i].x, this->m37C[i].y, this->m37C[i].z);
+        this->m33C[i].mPos.set(newPos);
+        this->m33C[i].mColor.r = 0x400;
+        this->m33C[i].mColor.g = 0x400;
+        this->m33C[i].mColor.b = 0x400;
+    }
 }
 
 /* 00000900-00000954       .text delete_point_light__Q28daObjVds5Act_cFv */
