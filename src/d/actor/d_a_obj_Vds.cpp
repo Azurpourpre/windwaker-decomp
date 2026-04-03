@@ -219,7 +219,9 @@ void daObjVds::Act_c::execute_point_light() {
 
 /* 00000900-00000954       .text delete_point_light__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::delete_point_light() {
-    /* Nonmatching */
+    for(int i = 0; i < 2; i++){
+        dKy_plight_cut(&this->m33C[i]);
+    }
 }
 
 /* 00000954-00000968       .text Event_init__Q28daObjVds5Act_cFv */
