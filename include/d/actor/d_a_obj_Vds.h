@@ -39,7 +39,7 @@ namespace daObjVds {
         void Event_init();
         void Event_exe();
         static BOOL solidHeapCB(fopAc_ac_c*);
-        void create_heap();
+        bool create_heap();
         cPhs_State _create();
         bool _delete();
         void set_mtx();

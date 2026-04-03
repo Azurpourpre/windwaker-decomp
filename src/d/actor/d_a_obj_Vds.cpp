@@ -251,12 +251,12 @@ void daObjVds::Act_c::Event_exe() {
 }
 
 /* 00000A28-00000A4C       .text solidHeapCB__Q28daObjVds5Act_cFP10fopAc_ac_c */
-BOOL daObjVds::Act_c::solidHeapCB(fopAc_ac_c*) {
-    /* Nonmatching */
+BOOL daObjVds::Act_c::solidHeapCB(fopAc_ac_c* i_actor) {
+    return static_cast<daObjVds::Act_c*>(i_actor)->create_heap();
 }
 
 /* 00000A4C-00001020       .text create_heap__Q28daObjVds5Act_cFv */
-void daObjVds::Act_c::create_heap() {
+bool daObjVds::Act_c::create_heap() {
     /* Nonmatching */
 }
 
