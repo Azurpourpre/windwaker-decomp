@@ -8,6 +8,7 @@
 #include "d/d_procname.h"
 #include "d/d_priority.h"
 #include "d/d_a_obj.h"
+#include "d/res/res_vds.h"
 
 const char daObjVds::Act_c::M_arcname[4] = "Vds";
 
@@ -59,16 +60,16 @@ void* daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
 BOOL daObjVds::Act_c::process_off_init() {
 
     if(
-        this->m2D4.init(
+        this->mBrkAnm0.init(
             this->M_anm0->getModel()->getModelData(),
             this->M_brk_data0,
             true,
             J3DFrameCtrl::EMode_NONE,
             1, 0, -1, true, 0)
     ){
-        this->m2D4.setPlaySpeed(0);
+        this->mBrkAnm0.setPlaySpeed(0);
         if(
-            this->m2F8.init(
+            this->mBrkAnm1.init(
                 this->M_anm1->getModel()->getModelData(),
                 this->M_brk_data1,
                 true,
@@ -76,7 +77,7 @@ BOOL daObjVds::Act_c::process_off_init() {
                 1, 0, -1, true, 0
             )
         ){
-            this->m2F8.setPlaySpeed(0);
+            this->mBrkAnm1.setPlaySpeed(0);
             return TRUE;
         }
     }
@@ -257,7 +258,74 @@ BOOL daObjVds::Act_c::solidHeapCB(fopAc_ac_c* i_actor) {
 
 /* 00000A4C-00001020       .text create_heap__Q28daObjVds5Act_cFv */
 bool daObjVds::Act_c::create_heap() {
-    /* Nonmatching */
+    J3DModelData* mdl_data0 = static_cast<J3DModelData*>(dComIfG_getObjectRes(M_arcname, VDS_BDL_VDSWT0));
+    JUT_ASSERT(848, mdl_data0 != NULL);
+
+    this->M_bck_data0 = static_cast<J3DAnmTransformKey*>(dComIfG_getObjectRes(M_arcname, VDS_BCK_VDSWT0));
+    JUT_ASSERT(852, M_bck_data0 != NULL);
+
+    if(mdl_data0 != NULL && M_bck_data0 != NULL)
+        this->M_anm0 = new mDoExt_McaMorf(mdl_data0,
+            NULL, NULL,
+            M_bck_data0,
+            J3DFrameCtrl::EMode_NONE,
+            1, 0, -1, 1, NULL, 0, 0x11020203);
+
+    JUT_ASSERT(865, M_anm0 != NULL);
+
+
+    J3DModelData* mdl_data1 = static_cast<J3DModelData*>(dComIfG_getObjectRes(M_arcname, VDS_BDL_VDSWT1));
+    JUT_ASSERT(869, mdl_data1 != NULL);
+
+    this->M_bck_data1 = static_cast<J3DAnmTransformKey*>(dComIfG_getObjectRes(M_arcname, VDS_BCK_VDSWT1));
+    JUT_ASSERT(873, M_bck_data1 != NULL);
+
+    if(mdl_data1 != NULL && M_bck_data1 != NULL)
+            this->M_anm1 = new mDoExt_McaMorf(mdl_data1,
+                NULL, NULL, 
+                M_bck_data1,
+                J3DFrameCtrl::EMode_NONE,
+                1, 0, -1, 1, NULL, 0, 0x11020203);
+    
+    JUT_ASSERT(886, M_anm1 != NULL);
+
+    this->M_brk_data0 = static_cast<J3DAnmTevRegKey*>(dComIfG_getObjectRes(M_arcname, VDS_BRK_VDSWT0));
+    JUT_ASSERT(891, M_bck_data0 != NULL);
+    BOOL brkAnm0_init = this->mBrkAnm0.init(mdl_data0,
+        M_brk_data0,
+        true, J3DFrameCtrl::EMode_NONE,
+        1, 0, -1, false, 0);
+
+    this->M_brk_data1 = static_cast<J3DAnmTevRegKey*>(dComIfG_getObjectRes(M_arcname, VDS_BRK_VDSWT1));
+    JUT_ASSERT(904, M_brk_data1 != NULL);
+    BOOL brkAnm1_init = this->mBrkAnm1.init(mdl_data1,
+        M_brk_data1,
+        true, J3DFrameCtrl::EMode_NONE,
+        1, 0, -1, false, 0);
+    
+    set_mtx();
+
+    cBgD_t* bgw_data = static_cast<cBgD_t*>(dComIfG_getObjectRes(M_arcname, VDS_DZB_VDSWT));
+    JUT_ASSERT(926, bgw_data != NULL);
+    
+    if(bgw_data != NULL){
+        this->m314 = new dBgW();
+        if(this->m314 != NULL)
+            this->m314->Set(bgw_data, 1, &this->m29C);
+    }
+
+    return (
+        this->M_bck_data0 != NULL &&
+        this->M_anm0 != NULL &&
+        this->M_anm0->getModel() != NULL && 
+        this->M_bck_data1 != NULL && 
+        this->M_anm1 != NULL &&
+        this->M_anm1->getModel() != NULL &&
+        this->m314 != NULL && 
+        this->M_brk_data0 != NULL &&
+        this->M_brk_data1 != NULL &&
+        brkAnm0_init && brkAnm1_init
+    );
 }
 
 /* 00001020-000011EC       .text _create__Q28daObjVds5Act_cFv */
@@ -316,8 +384,8 @@ bool daObjVds::Act_c::_execute() {
     Event_exe();
     PlayLoopJointAnimation();
 
-    this->m2D4.setFrame(this->m32C[0] * (this->M_brk_data0->getFrameMax() - 1));
-    this->m2F8.setFrame(this->m32C[1] * (this->M_brk_data1->getFrameMax() - 1));
+    this->mBrkAnm0.setFrame(this->m32C[0] * (this->M_brk_data0->getFrameMax() - 1));
+    this->mBrkAnm1.setFrame(this->m32C[1] * (this->M_brk_data1->getFrameMax() - 1));
     
     process_common();
     process_main();
@@ -336,9 +404,9 @@ bool daObjVds::Act_c::_draw() {
     dKy_getEnvlight().setLightTevColorType(this->M_anm1->getModel(), &this->tevStr);
 
     J3DModelData* modelData = this->M_anm0->getModel()->getModelData();
-    this->m2D4.entry(modelData, this->m2D4.getFrame());
+    this->mBrkAnm0.entry(modelData, this->mBrkAnm0.getFrame());
     modelData = this->M_anm1->getModel()->getModelData();
-    this->m2F8.entry(modelData, this->m2F8.getFrame());
+    this->mBrkAnm1.entry(modelData, this->mBrkAnm1.getFrame());
     this->M_anm0->updateDL();
     this->M_anm1->updateDL();
 

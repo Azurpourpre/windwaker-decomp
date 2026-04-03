@@ -49,14 +49,14 @@ namespace daObjVds {
     public:
         /* 0x290 */ void* m290;
         /* 0x294 */ request_of_phase_process_class mPhs;
-        /* 0x29C */ Mtx m39C;
+        /* 0x29C */ Mtx m29C;
         /* 0x2CC */ mDoExt_McaMorf* M_anm0;
         /* 0x2D0 */ J3DAnmTransformKey* M_bck_data0;
-        /* 0x2D4 */ mDoExt_brkAnm m2D4;
+        /* 0x2D4 */ mDoExt_brkAnm mBrkAnm0;
         /* 0x2EC */ J3DAnmTevRegKey* M_brk_data0;
         /* 0x2F0 */ mDoExt_McaMorf* M_anm1;
         /* 0x2F4 */ J3DAnmTransformKey* M_bck_data1;
-        /* 0x2F8 */ mDoExt_brkAnm m2F8;
+        /* 0x2F8 */ mDoExt_brkAnm mBrkAnm1;
         /* 0x310 */ J3DAnmTevRegKey* M_brk_data1;
         /* 0x314 */ dBgW* m314;
         /* 0x318 */ u32 m318;
