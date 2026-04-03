@@ -117,7 +117,7 @@ void daObjVds::Act_c::process_on_main() {
 
 /* 000004F4-000005C0       .text process_init__Q28daObjVds5Act_cFi */
 BOOL daObjVds::Act_c::process_init(int doExec) {
-    static procInitFun_t init_table[2];
+    static procInitFun_t init_table[2] = {};
     static s8 init;
 
     if(!init){
@@ -137,7 +137,7 @@ BOOL daObjVds::Act_c::process_init(int doExec) {
 
 /* 000005C0-0000065C       .text process_main__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::process_main() {
-    static procMainFun_t main_table[2];
+    static procMainFun_t main_table[2] = {};
     static s8 init;
 
     if(init == 0){
@@ -146,7 +146,7 @@ void daObjVds::Act_c::process_main() {
         init = 1;
     }
 
-    if(this->m31C){
+    if(0 <= this->m31C && this->m31C < 2){
         (this->*main_table[this->m31C])();
     }
 }
