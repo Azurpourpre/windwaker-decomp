@@ -226,12 +226,28 @@ void daObjVds::Act_c::delete_point_light() {
 
 /* 00000954-00000968       .text Event_init__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::Event_init() {
-    /* Nonmatching */
+    this->mEventIdx = -1;
+    this->m336 = 0;
 }
 
 /* 00000968-00000A28       .text Event_exe__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::Event_exe() {
-    /* Nonmatching */
+    switch(this->m336){
+        case 1:
+            if(this->eventInfo.checkCommandDemoAccrpt()){
+                this->m336 = 2;
+            }
+            else {
+                fopAcM_orderOtherEventId(this, this->mEventIdx);
+                this->eventInfo.onCondition(dEvtCnd_UNK2_e);
+            }
+            break;
+        case 2:
+            if(dComIfGp_evmng_endCheck(this->mEventIdx)){
+                dComIfGp_event_onEventFlag(dSv_event_flag_c::UNK_0008);
+                Event_init();
+            }
+    }
 }
 
 /* 00000A28-00000A4C       .text solidHeapCB__Q28daObjVds5Act_cFP10fopAc_ac_c */
