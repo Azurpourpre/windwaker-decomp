@@ -1,6 +1,7 @@
 #ifndef D_A_OBJ_VDS_H
 #define D_A_OBJ_VDS_H
 
+#include "d/d_a_obj.h"
 #include "d/d_bg_w.h"
 #include "f_op/f_op_actor.h"
 #include "m_Do/m_Do_ext.h"
@@ -16,11 +17,19 @@ namespace daObjVds {
         typedef BOOL (daObjVds::Act_c::*procInitFun_t)();   
         typedef void (daObjVds::Act_c::*procMainFun_t)();
 
+        enum VDS_SIDE {
+            SIDE_0,
+            SIDE_1
+        };
+
         // Globals variables
         static const char M_arcname[4];
 
         // Methods
-        void is_switch() const {}
+        bool is_switch() {
+            int switchIndex = daObj::PrmAbstract(this, 8, 0);
+            return dComIfGs_isSwitch(switchIndex, fopAcM_GetHomeRoomNo(this));
+        }
     
         BOOL SetLoopJointAnimation(J3DAnmTransformKey*, J3DAnmTransformKey*, float, float);
         BOOL PlayLoopJointAnimation();

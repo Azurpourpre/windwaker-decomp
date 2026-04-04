@@ -30,9 +30,7 @@ BOOL daObjVds::Act_c::PlayLoopJointAnimation() {
 
 /* 00000188-000001E8       .text set_first_process__Q28daObjVds5Act_cFv */
 void daObjVds::Act_c::set_first_process() {
-    int switchIndex = daObj::PrmAbstract(this, 8, 0);
-    BOOL isSwitch = dComIfGs_isSwitch(switchIndex, fopAcM_GetHomeRoomNo(this));
-    process_init(isSwitch);
+    process_init(is_switch());
 }
 
 /* 000001E8-00000214       .text ds_search_switchCB__8daObjVdsFPvPv */
@@ -44,7 +42,7 @@ static void* daObjVds::ds_search_switchCB(void* i_act, void* i_VdsAct) {
 
 /* 00000214-000002B0       .text search_switchCB__Q28daObjVds5Act_cFP10fopAc_ac_c */
 void* daObjVds::Act_c::search_switchCB(fopAc_ac_c* i_act) {
-    if(fopAc_IsActor(i_act) && fopAcM_GetName(this) == PROC_Obj_Swlight){
+    if(fopAc_IsActor(i_act) && fopAcM_GetName(i_act) == PROC_Obj_Swlight){
         for(int i = 0; i < 2; i++){
             if(this->m324[i] == -1){
                 this->m324[i] = fopAcM_GetID(i_act);
@@ -92,8 +90,7 @@ void daObjVds::Act_c::process_off_main() {
         this->m32C[i] = actor[5].eyePos.x;
     }
 
-    int prm = daObj::PrmAbstract(this, 8, 0);
-    if(dComIfGs_isSwitch(prm, fopAcM_GetHomeRoomNo(this))){
+    if(is_switch()){
         process_init(TRUE);
     }
 }
@@ -117,7 +114,7 @@ void daObjVds::Act_c::process_on_main() {
 }
 
 /* 000004F4-000005C0       .text process_init__Q28daObjVds5Act_cFi */
-BOOL daObjVds::Act_c::process_init(int doExec) {
+BOOL daObjVds::Act_c::process_init(int i_side) {
     static procInitFun_t init_table[2] = {};
     static s8 init;
 
@@ -127,8 +124,8 @@ BOOL daObjVds::Act_c::process_init(int doExec) {
         init = 1;
     }
 
-    if(0 <= doExec && doExec < 2 && (this->*init_table[doExec])() != FALSE){
-        this->m31C = doExec;
+    if(0 <= i_side && i_side < 2 && (this->*init_table[i_side])() != FALSE){
+        this->m31C = i_side;
         return TRUE;
     }
     else {
@@ -192,10 +189,10 @@ void daObjVds::Act_c::process_common() {
 
 /* 000007EC-0000087C       .text create_point_light__Q28daObjVds5Act_cFiP4cXyz */
 void daObjVds::Act_c::create_point_light(int i_side, cXyz* i_actorPos){
-    u8 side = i_side & 1;
+    VDS_SIDE side = static_cast<VDS_SIDE>(i_side & 1);
 
     this->m33C[side].mPos.set(*i_actorPos);
-    this->m37C->set(*i_actorPos);
+    this->m37C[side].set(*i_actorPos);
     
     this->m33C[side].mColor.r = 0x400;
     this->m33C[side].mColor.g = 0x400;
